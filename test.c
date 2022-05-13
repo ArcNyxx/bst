@@ -8,9 +8,7 @@
 
 #include "bst.h"
 
-#define LENGTH(array) (sizeof(array) / sizeof(array[0]))
-
-int32_t valarr[100] = {
+bst_find_t valarr[100] = {
 	 534, 6415,  465, 4459, 6869, 4442, 5840, 4180, 7450, 9265,
 	  23, 2946, 3657, 3003,   29, 8922, 2199, 6973, 2344, 1802,
 	9248, 5388, 2198, 2838, 1117, 5346, 4619, 8334, 9593, 2288,
@@ -23,7 +21,7 @@ int32_t valarr[100] = {
 	1310, 3043, 8247, 6382, 2470, 3072, 1297, 7396, 7073,  140
 };
 
-int32_t errarr[5][20] = {
+bst_find_t errarr[5][20] = {
 	{ 915,  1802, 1994, 6083,  865, 8735, 6457, 8334, 4459, 3003,
 	  2198, 2470, 7642,   15, 7772, 1152,   29, 2096,  574, 6415 },
 
@@ -40,7 +38,7 @@ int32_t errarr[5][20] = {
 	   534, 2199, 6382, 7479, 8370, 7346, 5337, 5840, 2205, 1176 }
 };
 
-int32_t fndarr[5] = { 1647,  140, 1001, 8138, 915 };
+bst_find_t fndarr[5] = { 1647,  140, 1001, 8138, 915 };
 
 static void
 die(const char *fmt, ...)
@@ -58,8 +56,7 @@ main(void)
 {
 	bst_t tree = { 0 };
 
-	/* -3 9593 -3 9593 23 9593 140 9593 140 9265 2147483647 -2147483648 */
-	for (uint32_t i = 0; i < LENGTH(valarr); ++i)
+	for (uint32_t i = 0; i < 100; ++i)
 		if (!bst_addn(&tree, bsn_init(valarr[i])))
 			die("bst: unable to add element: %d\n", valarr[i]);
 
@@ -68,6 +65,7 @@ main(void)
 		fprintf(stderr, "bst: %11s %11d\n", bst_find(&tree, fndarr[i])
 				!= NULL ? "found" : "not found", fndarr[i]);
 
+	/* -3 9593 -3 9593 23 9593 140 9593 140 9265 2147483647 -2147483648 */
 	fprintf(stderr, "\nbst: %11d %11d\n", bst_minn(&tree), bst_maxn(&tree));
 	for (uint32_t i = 0; i < 5; ++i) {
 		for (uint32_t j = 0; j < 20; ++j)
@@ -75,4 +73,10 @@ main(void)
 		fprintf(stderr, "bst: %11d %11d\n", bst_minn(&tree),
 				bst_maxn(&tree));
 	}
+	
+	for (uint32_t i = 0; i < 100; ++i)
+		if (!bst_addn(&tree, bsn_init(valarr[i])))
+			die("bst: unable to add element: %d\n", valarr[i]);
+	if (bst_dest(&tree)->root != NULL)
+		die("bst: unable to destroy all elements\n");
 }

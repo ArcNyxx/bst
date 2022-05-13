@@ -56,15 +56,23 @@ bsn_init(bst_find_t val)
 	node->val = val, node->lft = node->rgt = NULL;
 }
 
-void
+bst_t *
 bst_init(bst_t *bst)
 {
 	bst->root = NULL, bst->size = 0;
 }
 
-void
+bst_t *
 bst_dest(bst_t *bst)
 {
+	/* unbearable lack of effort, do not use */
+	if (bst->root == NULL)
+		return bst;
+
+	for (; bst->root->lft != NULL; bsn_dest(bst->root->lft, bst->root));
+	for (; bst->root->rgt != NULL; bsn_dest(bst->root->rgt, bst->root));
+
+	return bst_init(bst);
 }
 
 bool

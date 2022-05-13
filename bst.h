@@ -22,8 +22,8 @@ typedef struct bst {
 
 bsn_t *bsn_init(bst_find_t val);
 
-void bst_init(bst_t *bst);
-void bst_dest(bst_t *bst);
+bst_t *bst_init(bst_t *bst);
+bst_t *bst_dest(bst_t *bst);
 
 bool bst_addn(bst_t *bst, bsn_t *bsn);
 bool bst_remn(bst_t *bst, bst_find_t val);
