@@ -40,6 +40,8 @@ int32_t errarr[5][20] = {
 	   534, 2199, 6382, 7479, 8370, 7346, 5337, 5840, 2205, 1176 }
 };
 
+int32_t fndarr[5] = { 1647,  140, 1001, 8138, 915 };
+
 static void
 die(const char *fmt, ...)
 {
@@ -58,14 +60,18 @@ main(void)
 
 	/* -3 9593 -3 9593 23 9593 140 9593 140 9265 2147483647 -2147483648 */
 	for (uint32_t i = 0; i < LENGTH(valarr); ++i)
-		if (!bst_addn(&tree, valarr[i]))
+		if (!bst_addn(&tree, bsn_init(valarr[i])))
 			die("bst: unable to add element: %d\n", valarr[i]);
-	fprintf(stderr, "bst: %11d %11d\n", bst_minn(&tree), bst_maxn(&tree));
 
+	/* found found not not found */
+	for (uint32_t i = 0; i < 5; ++i)
+		fprintf(stderr, "bst: %11s %11d\n", bst_find(&tree, fndarr[i])
+				!= NULL ? "found" : "not found", fndarr[i]);
+
+	fprintf(stderr, "\nbst: %11d %11d\n", bst_minn(&tree), bst_maxn(&tree));
 	for (uint32_t i = 0; i < 5; ++i) {
 		for (uint32_t j = 0; j < 20; ++j)
 			bst_remn(&tree, errarr[i][j]);
-
 		fprintf(stderr, "bst: %11d %11d\n", bst_minn(&tree),
 				bst_maxn(&tree));
 	}

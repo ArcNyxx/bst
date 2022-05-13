@@ -8,25 +8,29 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+typedef int32_t bst_find_t;
+
 typedef struct bsn {
-	int32_t val;
+	bst_find_t val;
 	struct bsn *lft, *rgt;
 } bsn_t;
 
 typedef struct bst {
 	bsn_t *root;
-	uint32_t size;
+	size_t size;
 } bst_t;
 
-void     bst_init(bst_t *bst);
-void     bst_dest(bst_t *bst);
+bsn_t *bsn_init(bst_find_t val);
 
-uint32_t bst_size(bst_t *bst);
+void bst_init(bst_t *bst);
+void bst_dest(bst_t *bst);
 
-bool     bst_addn(bst_t *bst, int32_t val);
-bool     bst_remn(bst_t *bst, int32_t val);
+bool bst_addn(bst_t *bst, bsn_t *bsn);
+bool bst_remn(bst_t *bst, bst_find_t val);
 
-int32_t  bst_minn(bst_t *bst);
-int32_t  bst_maxn(bst_t *bst);
+bsn_t *bst_find(bst_t *bst, bst_find_t val);
+
+bst_find_t bst_minn(bst_t *bst);
+bst_find_t bst_maxn(bst_t *bst);
 
 #endif /* BST_H */

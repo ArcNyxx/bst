@@ -2,7 +2,7 @@
 # Copyright (C) 2022 ArcNyxx
 # see LICENCE file for licensing information
 
-SRC = bst.c main.c
+SRC = bst.c test.c
 OBJ = $(SRC:.c=.o)
 
 all: bst

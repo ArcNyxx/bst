@@ -7,17 +7,7 @@
 
 #include "bst.h"
 
-static bsn_t *bsn_init(int32_t val);
 static void bsn_dest(bsn_t *curr, bsn_t *prev);
-
-static bsn_t *
-bsn_init(int32_t val)
-{
-	bsn_t *node;
-	if ((node = malloc(sizeof(bsn_t))) == NULL)
-		exit(1);
-	node->val = val, node->lft = node->rgt = NULL;
-}
 
 static void
 bsn_dest(bsn_t *curr, bsn_t *prev)
@@ -57,6 +47,15 @@ bsn_dest(bsn_t *curr, bsn_t *prev)
 	free(curr);
 }
 
+bsn_t *
+bsn_init(bst_find_t val)
+{
+	bsn_t *node;
+	if ((node = malloc(sizeof(bsn_t))) == NULL)
+		exit(1);
+	node->val = val, node->lft = node->rgt = NULL;
+}
+
 void
 bst_init(bst_t *bst)
 {
@@ -68,44 +67,38 @@ bst_dest(bst_t *bst)
 {
 }
 
-uint32_t
-bst_size(bst_t *bst)
-{
-	return bst->size;
-}
-
 bool
-bst_addn(bst_t *bst, int32_t val)
+bst_addn(bst_t *bst, bsn_t *bsn)
 {
 	bsn_t *curr = bst->root, *prev;
 
 	if (curr == NULL) {
-		bst->root = bsn_init(val), bst->size = 1;
+		bst->root = bsn, bst->size = 1;
 		return true;
 	}
 
 	while (curr != NULL) {
-		if (curr->val == val)
+		if (curr->val == bsn->val)
 			return false;
 
 		prev = curr;
-		if (val > curr->val)
+		if (bsn->val > curr->val)
 			curr = curr->rgt;
 		else
 			curr = curr->lft;
 	}
 
-	if (val > prev->val)
-		prev->rgt = bsn_init(val);
+	if (bsn->val > prev->val)
+		prev->rgt = bsn;
 	else
-		prev->lft = bsn_init(val);
+		prev->lft = bsn;
 
 	bst->size += 1;
 	return true;
 }
 
 bool
-bst_remn(bst_t *bst, int32_t val)
+bst_remn(bst_t *bst, bst_find_t val)
 {
 	bsn_t *curr = bst->root, *prev = curr;
 
@@ -141,7 +134,25 @@ bst_remn(bst_t *bst, int32_t val)
 	return false;
 }
 
-int32_t
+bsn_t *
+bst_find(bst_t *bst, bst_find_t val)
+{
+	bsn_t *curr = bst->root;
+
+	while (curr != NULL) {
+		if (curr->val == val)
+			return curr;
+
+		if (val > curr->val)
+			curr = curr->rgt;
+		else
+			curr = curr->lft;
+	}
+
+	return NULL;
+}
+
+bst_find_t
 bst_minn(bst_t *bst)
 {
 	if (bst->size == 0)
@@ -152,7 +163,7 @@ bst_minn(bst_t *bst)
 	return node->val;
 }
 
-int32_t
+bst_find_t
 bst_maxn(bst_t *bst)
 {
 	if (bst->size == 0)
