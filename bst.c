@@ -59,6 +59,7 @@ bsn_init(bst_find_t val)
 bst_t *
 bst_init(bst_t *bst)
 {
+	/* unneeded if initialised as { 0 } */
 	bst->root = NULL, bst->size = 0;
 }
 

@@ -4,10 +4,11 @@
 
 SRC = bst.c test.c
 OBJ = $(SRC:.c=.o)
+HEAD = bst.h
 
 all: bst
 
-$(OBJ): bst.h
+$(OBJ): $(HEAD)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $<
@@ -16,4 +17,10 @@ bst: $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
 
 clean:
-	rm -f bst $(OBJ)
+	rm -f bst bst.tar.gz $(OBJ)
+
+dist: clean
+	mkdir -p bst
+	cp LICENCE Makefile $(SRC) $(HEAD) bst
+	tar -cf - bst | gzip -c > "bst.tar.gz"
+	rm -rf bst
