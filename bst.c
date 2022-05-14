@@ -109,11 +109,11 @@ bst_addn(bst_t *bst, bsn_t *bsn)
 bool
 bst_remn(bst_t *bst, bst_find_t val)
 {
-	bsn_t *curr = bst->root, *prev = curr;
+	bsn_t *curr = bst->root, *prev;
 
 	while (curr != NULL) {
 		if (curr->val == val) {
-			if (prev == curr) {
+			if (curr == bst->root) {
 				if (curr->lft != NULL && curr->rgt != NULL) {
 					bsn_dest(curr, curr);
 				} else {
