@@ -28,7 +28,7 @@ bst_t *bst_init(bst_t *bst);
 bst_t *bst_dest(bst_t *bst);
 
 bool bst_addn(bst_t *bst, bsn_t *bsn);
-bool bst_remn(bst_t *bst, bst_find_t val);
+bsn_t *bst_remn(bst_t *bst, bst_find_t val);
 
 bsn_t *bst_find(bst_t *bst, bst_find_t val);
 

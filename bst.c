@@ -7,9 +7,9 @@
 
 #include "bst.h"
 
-static void bsn_dest(bsn_t *curr, bsn_t *prev);
+static bsn_t *bsn_dest(bsn_t *curr, bsn_t *prev);
 
-static void
+static bsn_t *
 bsn_dest(bsn_t *curr, bsn_t *prev)
 {
 	if (curr->lft == NULL && curr->rgt == NULL) {
@@ -18,7 +18,7 @@ bsn_dest(bsn_t *curr, bsn_t *prev)
 		else
 			prev->rgt = NULL;
 	} else if (curr->lft != NULL && curr->rgt != NULL) {
-		/* find max on lft side */
+		/* find max on left side */
 		bsn_t *scurr = curr->lft, *sprev = curr;
 		for (; scurr->rgt != NULL; sprev = scurr, scurr = scurr->rgt);
 
@@ -32,19 +32,13 @@ bsn_dest(bsn_t *curr, bsn_t *prev)
 		else
 			sprev->rgt = scurr->lft;
 	} else {
-		bsn_t *new;
-		if (curr->lft != NULL)
-			new = curr->lft;
-		else
-			new = curr->rgt;
-
 		if (prev->lft == curr)
-			prev->lft = new;
+			prev->lft = curr->lft != NULL ? curr->lft : curr->rgt;
 		else
-			prev->rgt = new;
+			prev->rgt = curr->lft != NULL ? curr->lft : curr->rgt;
 	}
 
-	free(curr);
+	return curr;
 }
 
 bsn_t *
@@ -71,6 +65,7 @@ bst_dest(bst_t *bst)
 				bsn_dest(bst->root->lft, bst->root));
 		for (; bst->root->rgt != NULL;
 				bsn_dest(bst->root->rgt, bst->root));
+		free(bst->root);
 	}
 
 	return bst_init(bst);
@@ -91,10 +86,7 @@ bst_addn(bst_t *bst, bsn_t *node)
 			return false;
 
 		prev = curr;
-		if (node->val > curr->val)
-			curr = curr->rgt;
-		else
-			curr = curr->lft;
+		curr = node->val > curr->val ? curr->rgt : curr->lft;
 	}
 
 	if (node->val > prev->val)
@@ -106,39 +98,33 @@ bst_addn(bst_t *bst, bsn_t *node)
 	return true;
 }
 
-bool
+bsn_t *
 bst_remn(bst_t *bst, bst_find_t val)
 {
 	bsn_t *curr = bst->root, *prev;
 
 	while (curr != NULL) {
 		if (curr->val == val) {
-			if (curr == bst->root) {
-				if (curr->lft != NULL && curr->rgt != NULL) {
-					bsn_dest(curr, curr);
-				} else {
-					if (curr->lft == NULL &&
-							curr->rgt == NULL)
-						bst->root = NULL;
-					else if (curr->lft == NULL)
-						bst->root = curr->rgt;
-					else
-						bst->root = curr->lft;
-					free(curr);
-				}
+			if (curr == bst->root && (curr->lft == NULL ||
+					curr->rgt == NULL)) {
+				/* root, unable to swap from left */
+				if (curr->lft == NULL &&
+						curr->rgt == NULL)
+					bst->root = NULL;
+				else if (curr->lft == NULL)
+					bst->root = curr->rgt;
+				else
+					bst->root = curr->lft;
 			} else {
-				bsn_dest(curr, prev);
+				curr = bsn_dest(curr, prev);
 			}
 
 			bst->size -= 1;
-			return true;
+			return curr;
 		}
 
 		prev = curr;
-		if (val > curr->val)
-			curr = curr->rgt;
-		else
-			curr = curr->lft;
+		curr = val > curr->val ? curr->rgt : curr->lft;
 	}
 	return false;
 }
@@ -152,10 +138,7 @@ bst_find(bst_t *bst, bst_find_t val)
 		if (curr->val == val)
 			return curr;
 
-		if (val > curr->val)
-			curr = curr->rgt;
-		else
-			curr = curr->lft;
+		curr = val > curr->val ? curr->rgt : curr->lft;
 	}
 
 	return NULL;

@@ -55,6 +55,7 @@ int
 main(void)
 {
 	bst_t tree = { 0 };
+	fprintf(stderr, "bst: sizeof node: %lld\n", sizeof(bsn_t));
 
 	for (size_t i = 0; i < 100; ++i)
 		if (!bst_addn(&tree, bsn_init(valarr[i])))
@@ -68,10 +69,13 @@ main(void)
 	fprintf(stderr, "\nbst: %20lld %20lld\n",
 			bst_minn(&tree), bst_maxn(&tree));
 	for (size_t i = 0; i < 5; ++i) {
-		for (size_t j = 0; j < 20; ++j)
-			if (!bst_remn(&tree, errarr[i][j]))
+		for (size_t j = 0; j < 20; ++j) {
+			bsn_t *rem;
+			if ((rem = bst_remn(&tree, errarr[i][j])) == NULL)
 				die("bst: unable to remove element: %lld",
 						errarr[i][j]);
+			free(rem);
+		}
 		fprintf(stderr, "bst: %20lld %20lld\n", bst_minn(&tree),
 				bst_maxn(&tree));
 	}
