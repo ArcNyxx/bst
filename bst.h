@@ -6,12 +6,14 @@
 #define BST_H
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <sys/types.h>
 
-typedef int32_t bst_find_t;
+typedef ssize_t bst_find_t;
+typedef struct { } bst_data_t;
 
 typedef struct bsn {
 	bst_find_t val;
+	bst_data_t data;
 	struct bsn *lft, *rgt;
 } bsn_t;
 

@@ -56,25 +56,27 @@ main(void)
 {
 	bst_t tree = { 0 };
 
-	for (uint32_t i = 0; i < 100; ++i)
+	for (size_t i = 0; i < 100; ++i)
 		if (!bst_addn(&tree, bsn_init(valarr[i])))
-			die("bst: unable to add element: %d\n", valarr[i]);
+			die("bst: unable to add element: %lld\n", valarr[i]);
 
-	/* found found not not found */
-	for (uint32_t i = 0; i < 5; ++i)
-		fprintf(stderr, "bst: %11s %11d\n", bst_find(&tree, fndarr[i])
-				!= NULL ? "found" : "not found", fndarr[i]);
+	for (size_t i = 0; i < 5; ++i)
+		fprintf(stderr, "bst: %20s %20lld\n",
+				bst_find(&tree, fndarr[i]) != NULL ?
+				"found" : "not found", fndarr[i]);
 
-	/* -3 9593 -3 9593 23 9593 140 9593 140 9265 2147483647 -2147483648 */
-	fprintf(stderr, "\nbst: %11d %11d\n", bst_minn(&tree), bst_maxn(&tree));
-	for (uint32_t i = 0; i < 5; ++i) {
-		for (uint32_t j = 0; j < 20; ++j)
-			bst_remn(&tree, errarr[i][j]);
-		fprintf(stderr, "bst: %11d %11d\n", bst_minn(&tree),
+	fprintf(stderr, "\nbst: %20lld %20lld\n",
+			bst_minn(&tree), bst_maxn(&tree));
+	for (size_t i = 0; i < 5; ++i) {
+		for (size_t j = 0; j < 20; ++j)
+			if (!bst_remn(&tree, errarr[i][j]))
+				die("bst: unable to remove element: %lld",
+						errarr[i][j]);
+		fprintf(stderr, "bst: %20lld %20lld\n", bst_minn(&tree),
 				bst_maxn(&tree));
 	}
 	
-	for (uint32_t i = 0; i < 100; ++i)
+	for (size_t i = 0; i < 100; ++i)
 		if (!bst_addn(&tree, bsn_init(valarr[i])))
 			die("bst: unable to add element: %d\n", valarr[i]);
 	if (bst_dest(&tree)->root != NULL)

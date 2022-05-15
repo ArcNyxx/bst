@@ -23,7 +23,7 @@ bsn_dest(bsn_t *curr, bsn_t *prev)
 		for (; scurr->rgt != NULL; sprev = scurr, scurr = scurr->rgt);
 
 		/* must only have one or zero children, delete other instead */
-		curr->val = scurr->val;
+		curr->val = scurr->val, curr->data = scurr->data;
 		curr = scurr;
 
 		/* reattach other branch */
@@ -54,53 +54,53 @@ bsn_init(bst_find_t val)
 	if ((node = malloc(sizeof(bsn_t))) == NULL)
 		exit(1);
 	node->val = val, node->lft = node->rgt = NULL;
+	return node;
 }
 
 bst_t *
 bst_init(bst_t *bst)
 {
-	/* unneeded if initialised as { 0 } */
 	bst->root = NULL, bst->size = 0;
 }
 
 bst_t *
 bst_dest(bst_t *bst)
 {
-	/* unbearable lack of effort, do not use */
-	if (bst->root == NULL)
-		return bst;
-
-	for (; bst->root->lft != NULL; bsn_dest(bst->root->lft, bst->root));
-	for (; bst->root->rgt != NULL; bsn_dest(bst->root->rgt, bst->root));
+	if (bst->root != NULL) {
+		for (; bst->root->lft != NULL;
+				bsn_dest(bst->root->lft, bst->root));
+		for (; bst->root->rgt != NULL;
+				bsn_dest(bst->root->rgt, bst->root));
+	}
 
 	return bst_init(bst);
 }
 
 bool
-bst_addn(bst_t *bst, bsn_t *bsn)
+bst_addn(bst_t *bst, bsn_t *node)
 {
 	bsn_t *curr = bst->root, *prev;
 
 	if (curr == NULL) {
-		bst->root = bsn, bst->size = 1;
+		bst->root = node, bst->size = 1;
 		return true;
 	}
 
 	while (curr != NULL) {
-		if (curr->val == bsn->val)
+		if (curr->val == node->val)
 			return false;
 
 		prev = curr;
-		if (bsn->val > curr->val)
+		if (node->val > curr->val)
 			curr = curr->rgt;
 		else
 			curr = curr->lft;
 	}
 
-	if (bsn->val > prev->val)
-		prev->rgt = bsn;
+	if (node->val > prev->val)
+		prev->rgt = node;
 	else
-		prev->lft = bsn;
+		prev->lft = node;
 
 	bst->size += 1;
 	return true;
@@ -165,7 +165,7 @@ bst_find_t
 bst_minn(bst_t *bst)
 {
 	if (bst->size == 0)
-		return INT_MAX;
+		return LLONG_MAX;
 
 	bsn_t *node = bst->root;
 	for (; node->lft != NULL; node = node->lft);
@@ -176,7 +176,7 @@ bst_find_t
 bst_maxn(bst_t *bst)
 {
 	if (bst->size == 0)
-		return INT_MIN;
+		return LLONG_MIN;
 
 	bsn_t *node = bst->root;
 	for (; node->rgt != NULL; node = node->rgt);
