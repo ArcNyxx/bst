@@ -13,7 +13,7 @@ all: bst.o
 $(OBJ): $(HEAD)
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -g
+	$(CC) $(CFLAGS) -c $<
 
 test: $(OBJ)
 	$(CC) $(OBJ) -o $@ $(LDFLAGS)
